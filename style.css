@@ -1,0 +1,190 @@
+/* Style Global */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f4f6f9;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 900px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Carte de Connexion */
+.login-card {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.login-card h2 {
+    color: #1a365d;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.login-card .subtitle {
+    color: #718096;
+    font-size: 0.9em;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 0.9em;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: 1em;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #3182ce;
+}
+
+.error-message {
+    color: #e53e3e;
+    font-size: 0.85em;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Boutons */
+.btn {
+    display: inline-block;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-primary {
+    background-color: #2b6cb0;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: #2c5282;
+}
+
+.btn-secondary {
+    background-color: #e2e8f0;
+    color: #4a5568;
+    width: auto;
+    padding: 8px 16px;
+}
+
+.btn-secondary:hover {
+    background-color: #cbd5e0;
+}
+
+.actions-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.actions-bar .btn-primary {
+    width: auto;
+    padding: 8px 20px;
+}
+
+/* Document PDF - Style identique */
+.pdf-document {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+}
+
+.pdf-header {
+    border-bottom: 2px solid #2b6cb0;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+.pdf-header h1 {
+    font-size: 1.6em;
+    color: #1a365d;
+    text-align: center;
+}
+
+/* Tableau */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.data-table th, 
+.data-table td {
+    border: 1px solid #cbd5e0;
+    padding: 12px 10px;
+    text-align: left;
+    font-size: 0.9em;
+}
+
+.data-table th {
+    background-color: #ebf8ff;
+    color: #2b6cb0;
+    font-weight: bold;
+}
+
+.data-table tbody tr:nth-child(even) {
+    background-color: #f7fafc;
+}
+
+/* Format Impression */
+@media print {
+    body {
+        background-color: #ffffff;
+        padding: 0;
+    }
+    
+    .actions-bar {
+        display: none !important;
+    }
+
+    .pdf-document {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+    }
+}
