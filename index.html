@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Gestion des Tâches Agent</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Écran de connexion -->
+    <div id="login-screen" class="container">
+        <div class="card login-card">
+            <h2>Connexion</h2>
+            <p class="subtitle">Accédez à votre espace de gestion des tâches</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Identifiant / Login</label>
+                    <input type="text" id="username" placeholder="Entrez votre identifiant" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" placeholder="Entrez votre mot de passe" required>
+                </div>
+                <div id="error-message" class="error-message"></div>
+                <button type="submit" class="btn btn-primary">Se connecter</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Interface principale (Document PDF) -->
+    <div id="app-screen" class="container hidden">
+        <div class="actions-bar">
+            <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
+            <button id="print-btn" class="btn btn-primary" onclick="window.print()">Imprimer / Exporter en PDF</button>
+        </div>
+
+        <!-- Document reproduisant le format PDF -->
+        <div class="pdf-document">
+            <header class="pdf-header">
+                <h1 id="document-title">Les tache de l'Agent: "<span id="agent-name">_responsible</span>"</h1>
+            </header>
+
+            <main class="pdf-body">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>fkt_recherche</th>
+                            <th>code_den</th>
+                            <th>GPS_Lat_ZD</th>
+                            <th>GPS_Long_</th>
+                            <th>description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Le contenu sera chargé dynamiquement depuis data.csv -->
+                    </tbody>
+                </table>
+            </main>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
