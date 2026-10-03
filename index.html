@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Application Gestion des Tâches Agent</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Bibliothèque Pako pour décompresser le fichier .gz -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
 </head>
 <body>
 
@@ -28,17 +30,16 @@
         </div>
     </div>
 
-    <!-- Interface principale (Document PDF) -->
+    <!-- Interface principale -->
     <div id="app-screen" class="container hidden">
         <div class="actions-bar">
             <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
             <button id="print-btn" class="btn btn-primary" onclick="window.print()">Imprimer / Exporter en PDF</button>
         </div>
 
-        <!-- Document reproduisant le format PDF -->
         <div class="pdf-document">
             <header class="pdf-header">
-                <h1 id="document-title">Les tache de l'Agent: "<span id="agent-name">_responsible</span>"</h1>
+                <h1 id="document-title">Les tâches de l'Agent : "<span id="agent-name">_responsible</span>"</h1>
             </header>
 
             <main class="pdf-body">
@@ -53,7 +54,7 @@
                         </tr>
                     </thead>
                     <tbody id="table-body">
-                        <!-- Le contenu sera chargé dynamiquement depuis data.csv -->
+                        <!-- Les données du fichier data.json.gz seront injectées ici -->
                     </tbody>
                 </table>
             </main>
