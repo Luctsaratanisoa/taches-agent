@@ -10,41 +10,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const VALID_USER = "admin";
     const VALID_PASS = "12345";
 
-    // Fonction pour charger et lire le fichier data.csv
-    async function chargerTableauDepuisCSV() {
+    // Fonction pour télécharger et décompresser le fichier data.json.gz
+    async function chargerTableauDepuisGz() {
+        const tableBody = document.getElementById('table-body');
+        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Chargement et décompression des données en cours...</td></tr>';
+
         try {
-            const response = await fetch('data.csv');
+            // 1. Récupération du fichier binaire .gz
+            const response = await fetch('data.json.gz');
             if (!response.ok) {
-                throw new Error("Impossible de trouver le fichier data.csv");
+                throw new Error("Impossible de trouver le fichier data.json.gz");
             }
+
+            const buffer = await response.arrayBuffer();
+
+            // 2. Décompression avec la bibliothèque Pako
+            const decompressed = pako.inflate(new Uint8Array(buffer), { to: 'string' });
             
-            const csvText = await response.text();
-            
-            // Découpage du fichier par ligne
-            const lignes = csvText.trim().split(/\r?\n/);
-            const tableBody = document.getElementById('table-body');
+            // 3. Conversion du texte JSON en objet JavaScript
+            const donnees = JSON.parse(decompressed);
+
+            // 4. Ingestion dans le tableau HTML
             tableBody.innerHTML = '';
 
-            // Lecture à partir de la ligne 1 (en ignorant les en-têtes à la ligne 0)
-            for (let i = 1; i < lignes.length; i++) {
-                if (!lignes[i].trim()) continue;
-                
-                // Séparation par virgule
-                const colonnes = lignes[i].split(',');
-
+            donnees.forEach(item => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${colonnes[0] || ''}</td>
-                    <td>${colonnes[1] || ''}</td>
-                    <td>${colonnes[2] || ''}</td>
-                    <td>${colonnes[3] || ''}</td>
-                    <td>${colonnes[4] || ''}</td>
+                    <td>${item.fkt_recherche || ''}</td>
+                    <td>${item.code_den || ''}</td>
+                    <td>${item.GPS_Lat_ZD || ''}</td>
+                    <td>${item.GPS_Long_ || ''}</td>
+                    <td>${item.description || ''}</td>
                 `;
                 tableBody.appendChild(row);
-            }
+            });
+
         } catch (error) {
             console.error('Erreur :', error);
-            alert("Erreur lors du chargement des données CSV.");
+            tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Erreur lors du chargement des données. Vérifiez que data.json.gz est bien sur GitHub.</td></tr>';
         }
     }
 
@@ -58,8 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (usernameInput === VALID_USER && passwordInput === VALID_PASS) {
             agentNameSpan.textContent = usernameInput;
 
-            // Chargement du fichier CSV
-            chargerTableauDepuisCSV();
+            // Déclencher le chargement et la décompression
+            chargerTableauDepuisGz();
 
             loginScreen.classList.add('hidden');
             appScreen.classList.remove('hidden');
