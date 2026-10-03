@@ -6,75 +6,97 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutBtn = document.getElementById('logout-btn');
     const agentNameSpan = document.getElementById('agent-name');
 
-    // Identifiants de démonstration
-    const VALID_USER = "admin";
-    const VALID_PASS = "12345";
+    // Variable globale pour stocker les données du JSON
+    let donneesGlobales = [];
 
-    // Fonction pour télécharger et décompresser le fichier data.json.gz
-    async function chargerTableauDepuisGz() {
-        const tableBody = document.getElementById('table-body');
-        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Chargement et décompression des données en cours...</td></tr>';
-
+    // 1. Préchargement et décompression de data.json.gz
+    async function préchargerDonnees() {
         try {
-            // 1. Récupération du fichier binaire .gz
             const response = await fetch('data.json.gz');
             if (!response.ok) {
-                throw new Error("Impossible de trouver le fichier data.json.gz");
+                throw new Error("Fichier data.json.gz introuvable");
             }
 
             const buffer = await response.arrayBuffer();
-
-            // 2. Décompression avec la bibliothèque Pako
+            // Décompression avec la bibliothèque Pako
             const decompressed = pako.inflate(new Uint8Array(buffer), { to: 'string' });
-            
-            // 3. Conversion du texte JSON en objet JavaScript
-            const donnees = JSON.parse(decompressed);
+            donneesGlobales = JSON.parse(decompressed);
 
-            // 4. Ingestion dans le tableau HTML
-            tableBody.innerHTML = '';
-
-            donnees.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.fkt_recherche || ''}</td>
-                    <td>${item.code_den || ''}</td>
-                    <td>${item.GPS_Lat_ZD || ''}</td>
-                    <td>${item.GPS_Long_ || ''}</td>
-                    <td>${item.description || ''}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-
+            console.log("Données chargées :", donneesGlobales.length, "lignes");
         } catch (error) {
-            console.error('Erreur :', error);
-            tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Erreur lors du chargement des données. Vérifiez que data.json.gz est bien sur GitHub.</td></tr>';
+            console.error('Erreur lors du préchargement :', error);
+            errorMessage.textContent = "Erreur de chargement des données. Vérifiez le fichier data.json.gz.";
         }
     }
 
-    // Traitement de la connexion
+    // Lancement du chargement au démarrage
+    préchargerDonnees();
+
+    // 2. Traitement de la connexion
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
         const usernameInput = document.getElementById('username').value.trim();
         const passwordInput = document.getElementById('password').value.trim();
 
-        if (usernameInput === VALID_USER && passwordInput === VALID_PASS) {
+        if (donneesGlobales.length === 0) {
+            errorMessage.textContent = "Les données sont en cours de chargement, veuillez repatienter un instant...";
+            return;
+        }
+
+        // Vérification de l'agent avec _responsible et password_EQ
+        const agentTrouve = donneesGlobales.find(item => {
+            const loginOK = item._responsible && String(item._responsible).trim() === usernameInput;
+            const passOK = item.password_EQ && String(item.password_EQ).trim() === passwordInput;
+            return loginOK && passOK;
+        });
+
+        if (agentTrouve) {
+            // Mise à jour du nom de l'agent affiché
             agentNameSpan.textContent = usernameInput;
 
-            // Déclencher le chargement et la décompression
-            chargerTableauDepuisGz();
+            // Filtrage des tâches rattachées à cet identifiant _responsible
+            const tachesAgent = donneesGlobales.filter(item => 
+                item._responsible && String(item._responsible).trim() === usernameInput
+            );
 
+            afficherTableau(tachesAgent);
+
+            // Changement d'écran
             loginScreen.classList.add('hidden');
             appScreen.classList.remove('hidden');
 
             errorMessage.textContent = '';
             loginForm.reset();
         } else {
-            errorMessage.textContent = 'Identifiant ou mot de passe incorrect.';
+            errorMessage.textContent = 'Identifiant (_responsible) ou mot de passe (password_EQ) incorrect.';
         }
     });
 
-    // Gestion de la déconnexion
+    // 3. Injection des données filtrées dans le tableau HTML
+    function afficherTableau(donnees) {
+        const tableBody = document.getElementById('table-body');
+        tableBody.innerHTML = '';
+
+        if (donnees.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Aucune tâche enregistrée pour cet agent.</td></tr>';
+            return;
+        }
+
+        donnees.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.fkt_recherche || ''}</td>
+                <td>${item.code_den || ''}</td>
+                <td>${item.GPS_Lat_ZD || ''}</td>
+                <td>${item.GPS_Long_ || ''}</td>
+                <td>${item.description || ''}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // 4. Déconnexion
     logoutBtn.addEventListener('click', () => {
         appScreen.classList.add('hidden');
         loginScreen.classList.remove('hidden');
